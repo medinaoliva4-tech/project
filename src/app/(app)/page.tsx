@@ -4,7 +4,7 @@ import { Camera, Footprints, HeartPulse, Moon, Play } from "lucide-react";
 import { assignTodayAction } from "./actions";
 import { firstName, requireClient } from "@/lib/auth";
 import { addDays, dayNumber, hoursAgoISO, dayShort, todayISO, weekDays, weekStartOf } from "@/lib/dates";
-import { SPLITS, exercisesBySplit, splitCover } from "@/lib/exercises";
+import { SPLITS, exercisesBySplit, splitCover, type SplitKey } from "@/lib/exercises";
 import { hevyLink } from "@/lib/hevy";
 import { fmtNum, fmtSleep, getRecovery } from "@/lib/recovery";
 import { isRest, pickToday, sessionDef } from "@/lib/sessions";
@@ -206,22 +206,36 @@ function TodayCard({
   const def = sessionDef(row.session);
   const rest = isRest(row.session);
   const href = rest ? "/train/descanso" : `/train/split/${def.split}`;
-  const count = rest ? 0 : exercisesBySplit(def.split as never).length;
+  const count = rest ? 0 : exercisesBySplit(def.split as SplitKey).length;
+
+  const cover = rest ? null : splitCover(def.split as SplitKey);
 
   return (
-    <div className="relative overflow-hidden rounded-[18px] bg-card p-5">
-      <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-accent/15 blur-2xl" />
-      <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-accent">
-        {pick.kind === "assigned" && "Asignado para hoy"}
-        {pick.kind === "suggested" && "Siguiente en tu split"}
-        {pick.kind === "done" && "Hecho hoy ✓"}
-      </p>
-      <p className="mt-1 text-[28px] font-bold leading-tight">{def.name}</p>
-      <p className="mt-1 text-[14px] text-muted">
-        {rest ? "Recupera: camina, movilidad y duerme bien" : `${count} ejercicios`}
-      </p>
+    <div
+      className={`relative overflow-hidden rounded-[18px] bg-card p-5 ${
+        cover ? "flex min-h-[260px] flex-col justify-end" : ""
+      }`}
+    >
+      {cover && (
+        <>
+          <Image src={cover} alt={def.name} fill sizes="(max-width: 448px) 100vw, 448px" className="object-cover" priority />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-black/5" />
+        </>
+      )}
+      <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-accent/25 blur-2xl" />
+      <div className="relative">
+        <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-accent">
+          {pick.kind === "assigned" && "Asignado para hoy"}
+          {pick.kind === "suggested" && "Siguiente en tu split"}
+          {pick.kind === "done" && "Hecho hoy ✓"}
+        </p>
+        <p className="mt-1 text-[28px] font-bold leading-tight">{def.name}</p>
+        <p className={`mt-1 text-[14px] ${cover ? "text-white/80" : "text-muted"}`}>
+          {rest ? "Recupera: camina, movilidad y duerme bien" : `${count} ejercicios`}
+        </p>
+      </div>
 
-      <div className="mt-4 flex flex-wrap gap-2">
+      <div className="relative mt-4 flex flex-wrap gap-2">
         <Link
           href={href}
           className="inline-flex items-center gap-1.5 rounded-full bg-white px-4 py-2 text-[14px] font-semibold text-black"
@@ -243,7 +257,7 @@ function TodayCard({
           <form action={assignTodayAction}>
             <input type="hidden" name="rowId" value={row.id} />
             <input type="hidden" name="today" value={today} />
-            <button className="rounded-full border border-line px-4 py-2 text-[14px] font-medium">
+            <button className="rounded-full border border-white/30 bg-black/30 px-4 py-2 text-[14px] font-medium backdrop-blur">
               Hacerlo hoy
             </button>
           </form>
