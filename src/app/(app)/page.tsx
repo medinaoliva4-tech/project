@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Bell, Camera, Footprints, HeartPulse, Moon, Play } from "lucide-react";
+import { Camera, Footprints, HeartPulse, Moon, Play } from "lucide-react";
 import { assignTodayAction } from "./actions";
 import { firstName, requireClient } from "@/lib/auth";
 import { addDays, dayNumber, hoursAgoISO, dayShort, todayISO, weekDays, weekStartOf } from "@/lib/dates";
@@ -17,7 +17,7 @@ export default async function HomePage() {
   const weekStart = weekStartOf(today);
   const days = weekDays(weekStart);
 
-  const [plan, recovery, { count: photosToday }, { count: newComments }] = await Promise.all([
+  const [plan, recovery, { count: photosToday }] = await Promise.all([
     getWeekPlan(supabase, profile.id, weekStart),
     getRecovery(supabase, profile.id, addDays(today, -6)),
     supabase
@@ -25,12 +25,6 @@ export default async function HomePage() {
       .select("id", { count: "exact", head: true })
       .eq("client_id", profile.id)
       .gte("taken_at", hoursAgoISO(24)),
-    supabase
-      .from("meal_comments")
-      .select("id, meal_photos!inner(client_id)", { count: "exact", head: true })
-      .eq("meal_photos.client_id", profile.id)
-      .neq("author_id", profile.id)
-      .gte("created_at", hoursAgoISO(72)),
   ]);
 
   const pick = pickToday(plan, today);
@@ -45,19 +39,13 @@ export default async function HomePage() {
   return (
     <Screen>
       {/* Header */}
-      <header className="flex items-center justify-between pt-2">
-        <Link href="/perfil" className="flex items-center gap-3">
+      <header className="pt-2">
+        <Link href="/perfil" className="flex w-fit items-center gap-3">
           <Avatar url={profile.avatar_url} name={profile.full_name} size={60} />
           <div className="leading-tight">
             <p className="text-[17px] font-semibold">Hey, {firstName(profile.full_name)}</p>
             <p className="text-[16px] text-white/90">Welcome back!</p>
           </div>
-        </Link>
-        <Link href="/comida" className="relative p-2" aria-label="Notificaciones">
-          <Bell size={24} />
-          {!!newComments && (
-            <span className="absolute right-1.5 top-1.5 h-2.5 w-2.5 rounded-full bg-accent" />
-          )}
         </Link>
       </header>
 

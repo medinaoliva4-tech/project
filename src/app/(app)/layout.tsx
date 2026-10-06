@@ -1,10 +1,5 @@
-import { BottomNav } from "@/components/bottom-nav";
+import { AppShell } from "@/components/app-shell";
 
 export default function AppLayout({ children }: LayoutProps<"/">) {
-  return (
-    <>
-      {children}
-      <BottomNav />
-    </>
-  );
+  return <AppShell>{children}</AppShell>;
 }

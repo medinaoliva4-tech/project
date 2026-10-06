@@ -3,7 +3,7 @@ import { ChevronRight } from "lucide-react";
 import type { ReactNode } from "react";
 
 export function Screen({ children }: { children: ReactNode }) {
-  return <main className="pt-safe mx-auto max-w-md px-5 pb-32">{children}</main>;
+  return <main className="pt-safe mx-auto max-w-md px-5 pb-8">{children}</main>;
 }
 
 export function SectionTitle({ children, action }: { children: ReactNode; action?: ReactNode }) {
