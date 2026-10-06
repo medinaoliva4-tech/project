@@ -1,5 +1,7 @@
 # Project — Plan + Wireframes (v0, pendiente de aprobación)
 
+> **Actualizado:** aprobado con cambios — Hevy queda como link (sin API), Fitbit va por Google Health API, videos de YouTube embebidos. Ver `README.md` para lo construido.
+
 > App cliente de **Andy** (coach). PWA: se agrega a la pantalla de inicio desde el navegador y funciona como app.
 > Estilo: minimalista, intuitivo. Ref visual: dashboard dark con cards (foto de referencia).
 
